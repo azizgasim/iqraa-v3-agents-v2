@@ -65,15 +65,9 @@ class Claim(BaseModel):
     counter_evidence_ids: list[str] = []
     approved: bool = False
 
-class RunContext(BaseModel):
-    """لا تشغيل بلا run_id + recipe"""
-    run_id: str = Field(default_factory=lambda: f"run_{uuid4().hex[:12]}")
-    project_id: str = "iqraa-12"
-    user_id: str = "researcher"
-    recipe_id: Optional[str] = None
-    cost_budget_usd: float = 1.0
-    cost_spent_usd: float = 0.0
-    started_at: datetime = Field(default_factory=datetime.utcnow)
+# RunContext moved to run_context.py as UnifiedRunContext
+# Re-export for backward compatibility
+from .run_context import UnifiedRunContext as RunContext, UnifiedRunContext, BudgetEnvelope
 
 class OperationInput(BaseModel):
     """عقد موحد لمدخلات كل عملية"""

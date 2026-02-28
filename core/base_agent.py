@@ -9,9 +9,10 @@ from typing import Any, Optional
 from uuid import uuid4
 from pydantic import BaseModel, Field
 from .models import (
-    RunContext, AutonomyLevel, RiskTier,
+    AutonomyLevel, RiskTier,
     OperationInput, OperationOutput, Evidence
 )
+from .run_context import UnifiedRunContext
 
 class AgentCard(BaseModel):
     """بطاقة تعريف إجبارية — ناقصة = خفض استقلالية"""
@@ -51,7 +52,7 @@ class BaseAgent(ABC):
         if not self.card.description or not self.card.operations:
             self.card.autonomy_level = AutonomyLevel.L0_READ
 
-    async def run(self, run_ctx: RunContext, params: dict[str, Any] = {}) -> AgentResult:
+    async def run(self, run_ctx: UnifiedRunContext, params: dict[str, Any] = {}) -> AgentResult:
         """التنفيذ الرئيسي: إدراك → دماغ → فعل"""
         start = datetime.utcnow()
         try:
@@ -87,11 +88,11 @@ class BaseAgent(ABC):
         ...
 
     @abstractmethod
-    async def think(self, perceived: dict, run_ctx: RunContext) -> dict[str, Any]:
+    async def think(self, perceived: dict, run_ctx: UnifiedRunContext) -> dict[str, Any]:
         """التخطيط والتفكير واتخاذ القرار"""
         ...
 
     @abstractmethod
-    async def act(self, plan: dict, run_ctx: RunContext) -> dict[str, Any]:
+    async def act(self, plan: dict, run_ctx: UnifiedRunContext) -> dict[str, Any]:
         """تنفيذ الخطة وإنتاج المخرجات"""
         ...
